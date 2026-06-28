@@ -2,6 +2,8 @@ const { ethers } = require('ethers');
 const config = require('./config');
 
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const MAX_PROCESSED_TX_CACHE = 1000;
+const INITIAL_RETRY_DELAY_MS = 400;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -59,14 +61,14 @@ function createMonitor({
   const backupProvider = new ethers.JsonRpcProvider(backupRpcUrl);
   let provider = primaryProvider;
 
-  let lastProcessedBlock = 0;
+  let lastProcessedBlock = null;
   const processedTxs = new Set();
   const txQueue = [];
   let timer = null;
   let running = false;
 
   async function callWithRetry(fn, label) {
-    let delay = 400;
+    let delay = INITIAL_RETRY_DELAY_MS;
 
     for (let i = 0; i < 3; i += 1) {
       try {
@@ -94,7 +96,7 @@ function createMonitor({
     processedTxs.add(txHash);
     txQueue.push(txHash);
 
-    if (txQueue.length > 1000) {
+    if (txQueue.length > MAX_PROCESSED_TX_CACHE) {
       const old = txQueue.shift();
       processedTxs.delete(old);
     }
@@ -155,7 +157,7 @@ function createMonitor({
     running = true;
 
     try {
-      if (!lastProcessedBlock) {
+      if (lastProcessedBlock === null) {
         await init();
       }
 

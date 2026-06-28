@@ -1,4 +1,5 @@
 const PRICE_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=crypto-com-chain&vs_currencies=usd';
+const CACHE_DURATION_MS = 60000;
 
 let cache = {
   usd: null,
@@ -16,7 +17,7 @@ async function fetchImpl(url) {
 
 async function getCroUsdPrice() {
   const now = Date.now();
-  if (cache.usd && now - cache.ts < 60000) {
+  if (cache.usd && now - cache.ts < CACHE_DURATION_MS) {
     return cache.usd;
   }
 
