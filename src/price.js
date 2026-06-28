@@ -1,4 +1,5 @@
 const PRICE_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=crypto-com-chain&vs_currencies=usd';
+// CoinGecko calls are cached for 60s to reduce request volume while keeping quotes fresh.
 const CACHE_DURATION_MS = 60000;
 
 let cache = {

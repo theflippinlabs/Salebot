@@ -4,6 +4,7 @@ const config = require('./config');
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 const MAX_PROCESSED_TX_CACHE = 1000;
 const INITIAL_RETRY_DELAY_MS = 400;
+const MAX_RETRIES = 3;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -70,11 +71,11 @@ function createMonitor({
   async function callWithRetry(fn, label) {
     let delay = INITIAL_RETRY_DELAY_MS;
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < MAX_RETRIES; i += 1) {
       try {
         return await fn(provider);
       } catch (error) {
-        if (i === 2) break;
+        if (i === MAX_RETRIES - 1) break;
         console.warn(`[monitor] ${label} failed attempt ${i + 1}, retrying...`);
         await sleep(delay);
         delay *= 2;

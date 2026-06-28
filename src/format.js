@@ -3,6 +3,13 @@ function shortenAddress(address) {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
+function formatCroPrice(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return '0';
+  const decimals = amount < 1 ? 4 : 2;
+  return amount.toFixed(decimals).replace(/\.?0+$/, '');
+}
+
 function formatSaleTweet({
   collectionName,
   collectionTag,
@@ -17,7 +24,7 @@ function formatSaleTweet({
 }) {
   const resolvedCollection = collectionName || 'NFT Collection';
   const resolvedItem = itemName || `#${tokenId}`;
-  const croDisplay = Number(priceCro).toFixed(2).replace(/\.00$/, '');
+  const croDisplay = formatCroPrice(priceCro);
   const usdDisplay = Number.isFinite(priceUsd) ? priceUsd.toFixed(2) : '0.00';
 
   return [

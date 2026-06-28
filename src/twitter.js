@@ -1,4 +1,5 @@
 const { TwitterApi } = require('twitter-api-v2');
+const TWEET_IMAGE_MIME_TYPE = 'image/jpeg';
 
 function createTwitterClient(config) {
   const hasCreds =
@@ -29,7 +30,7 @@ async function postSaleTweet(client, text, mediaBuffer) {
     let mediaIds = undefined;
 
     if (mediaBuffer) {
-      const mediaId = await client.v1.uploadMedia(mediaBuffer, { mimeType: 'image/jpeg' });
+      const mediaId = await client.v1.uploadMedia(mediaBuffer, { mimeType: TWEET_IMAGE_MIME_TYPE });
       mediaIds = [mediaId];
     }
 
