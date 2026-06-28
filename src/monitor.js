@@ -118,7 +118,7 @@ function createMonitor({
       callWithRetry((p) => p.getTransactionReceipt(log.transactionHash), 'getTransactionReceipt'),
     ]);
 
-    if (!tx || !receipt || tx.value === 0n) {
+    if (!tx || !receipt) {
       return;
     }
 
